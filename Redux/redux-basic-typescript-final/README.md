@@ -1,5 +1,5 @@
 
-## Final Basic React-Typscript Project
+## React-Redux-Typscript Project Final
 
 This project is build using React, Redux and Typescript that will be use in demo purposes for beginners who wants to learn the three framework. 
 
