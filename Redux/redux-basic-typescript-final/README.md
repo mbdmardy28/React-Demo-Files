@@ -1,7 +1,7 @@
 
 ## React-Redux-Typscript Project - Final
 
-This project is build using React, Redux and Typescript that will be use in demo purposes for beginners who wants to learn the three framework. These is the final version of the project and can be improve in the future. 
+This project is build using React, Redux and Typescript that will be used for demo purposes that could help the beginners to learn the three framework. This is the final version of the demo project and can be improved in the future. 
 
 ### `Tools`
 * Visual Studio Code
