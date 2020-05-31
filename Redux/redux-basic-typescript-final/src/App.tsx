@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Button, Typography, TextField } from "@material-ui/core";
+import { Grid, Button, Typography, TextField, Paper } from "@material-ui/core";
 import './App.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { Counter } from './redux/CounterState';
@@ -24,29 +24,30 @@ export default () => {
   return (
     <div className="App">
       <div className="App-content">
-
-
-
         <Grid>
           <Grid item>
-            <form onSubmit={handleSubmitCounter}>
-              <TextField
-                value={NewCounter}
-                onChange={(e) => setNewCounter(+e.target.value)}
-                id="counterId"
-                label="Input Counter"
-                variant="filled"
-                color="secondary"
-              />
-            </form>
-          </Grid>
-          <Grid item>
-            <Typography variant="h2" >Counter: {counter}</Typography>
+            <Paper style={{margin: 20}}>
+              <form onSubmit={handleSubmitCounter}>
+                <TextField
+                  value={NewCounter}
+                  onChange={(e) => setNewCounter(+e.target.value)}
+                  id="counterId"
+                  label="Input Counter"
+                  variant="filled"
+                  color="secondary"
+                />
+              </form>
+              <Typography variant="h2" >Counter: {counter}</Typography>
+            </Paper>
           </Grid>
           <Grid item xs>
             <Grid container spacing={2}>
               <Grid item xs>
-                <Button variant="contained" onClick={handleIncrement}>INCREMENT</Button>
+                <Button 
+                    variant="contained" 
+                    onClick={handleIncrement}>
+                      INCREMENT
+                </Button>
               </Grid>
               <Grid item xs>
                 <Button variant="contained" color="secondary" onClick={handleDecrement}>DECREMENT</Button>
