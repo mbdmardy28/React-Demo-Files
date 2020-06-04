@@ -1,10 +1,10 @@
 import { Action } from "redux";
 
 export interface Task {
-    Id: number,
-    Title: string,
-    Description: string,
-    Status: string 
+    id: number,
+    title: string,
+    description: string,
+    status: string 
 }
 
 export interface TaskState {

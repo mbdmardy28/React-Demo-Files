@@ -1,5 +1,5 @@
 import { TaskState, TaskAction } from "./TaskState";
-import { FETCH_TASK_REQUEST, FETCH_TASK_SUCCESS, FETCH_TASK_FAILURE, ADD_TASK_REQUEST, ADD_TASK_SUCCESS, ADD_TASK_FAILURE } from "./TaskActionTypes";
+import { FETCH_TASK_REQUEST, FETCH_TASK_SUCCESS, FETCH_TASK_FAILURE, ADD_TASK_REQUEST, ADD_TASK_SUCCESS, ADD_TASK_FAILURE, DELETE_TASK_REQUEST, DELETE_TASK_SUCCESS } from "./TaskActionTypes";
 
 
 const initialState: TaskState = {
@@ -47,6 +47,19 @@ const TaskReducer = (state = initialState, action: TaskAction) => {
                 ...state,
                 error:action.payload.error,
                 loading: false
+            }
+        case DELETE_TASK_REQUEST: 
+            return {
+                ...state,
+                loading: true,
+                error: '',
+            }
+        case DELETE_TASK_SUCCESS: 
+            return {
+                ...state,
+                loading: false,
+                error:'',
+                tasks: state.tasks.filter(task => action.payload.tasks.findIndex(i => i.id === task.id) === -1)
             }
         default:
             return state;

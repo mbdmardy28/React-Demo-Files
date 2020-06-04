@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Grid, makeStyles } from "@material-ui/core";
+import { Grid, makeStyles, Typography, CardContent, Card } from "@material-ui/core";
 import MaterialTable, { Column } from "material-table";
 import { Task, TaskState } from "../../redux/TaskState";
 import { useSelector, useDispatch } from "react-redux";
-import { AddTaskAction } from "../../redux/TaskActions";
-
+import { AddTaskAction, DeleteTaskAction } from "../../redux/TaskActions";
+import { green } from "@material-ui/core/colors";
 
 const useStyles = makeStyles({
-    paper: {
-        padding: 10,
-        margin: 10,
+    card: {
+        height: 90,
+        marginRight: 20,
+        backgroundColor: green[50],
+        marginBottom: 25
 
-        overflowY: 'auto',
-        height: 440
     },
-    table: {
-        margin: 10
+    CardRoot: {
+        display: "flex",
+        flexDirection: "column",
+
     }
 });
 
@@ -27,9 +29,9 @@ interface TableState {
 interface Props {
     dispatchGetTasks: () => void
 }
-const TaskComponent: React.FC<Props> = ({dispatchGetTasks}) => {
+const TaskComponent: React.FC<Props> = ({ dispatchGetTasks }) => {
     const classes = useStyles()
-    const {tasks, loading} = useSelector<TaskState>(state=> state) as TaskState
+    const { tasks, loading } = useSelector<TaskState>(state => state) as TaskState
     const columnHeaders: Array<Column<Task>> = [
         { title: 'Id', field: 'id', hidden: true },
         { title: 'Title', field: 'title' },
@@ -37,7 +39,7 @@ const TaskComponent: React.FC<Props> = ({dispatchGetTasks}) => {
         {
             title: 'Status',
             field: 'status',
-            lookup: { Active: 'Active', New: 'New',Resolved: 'Resolved', Closed:'Closed' },
+            lookup: { Active: 'Active', New: 'New', Resolved: 'Resolved', Closed: 'Closed' },
         },
     ]
 
@@ -46,24 +48,30 @@ const TaskComponent: React.FC<Props> = ({dispatchGetTasks}) => {
     useEffect(() => {
         dispatchGetTasks();
 
-    },[dispatchGetTasks])
-   
+    }, [dispatchGetTasks])
+
     useEffect(() => {
-        if(tasks.length > 0) {
+        if (tasks.length > 0) {
             setTaskData(tasks)
         }
     }, [tasks])
-   
+
     const dispatch = useDispatch();
 
     const handleAddRow = (task: Task) => {
         dispatch(AddTaskAction(task));
     }
 
-    return <Grid container spacing={2}>
+    const handleDeleteRow = (task: Task) => {
+        console.log("perform delete action")
+        dispatch(DeleteTaskAction(task));
+
+    }
+
+    return <Grid container spacing={2} style={{ margin: 10 }}>
         <Grid item xs={8}>
-            <div className={classes.table}>
-            <MaterialTable
+            <div>
+                <MaterialTable
                     title="Tasks"
                     isLoading={loading}
                     columns={columnHeaders}
@@ -71,9 +79,10 @@ const TaskComponent: React.FC<Props> = ({dispatchGetTasks}) => {
                     editable={{
                         onRowAdd: (newData) =>
                             new Promise((resolve) => {
-                                resolve()
-                                handleAddRow(newData);
-                             
+                                setTimeout(() => {
+                                    resolve()
+                                    handleAddRow(newData);
+                                }, 600)
                             }),
                         onRowUpdate: (newData, oldData) =>
                             new Promise((resolve) => {
@@ -90,23 +99,44 @@ const TaskComponent: React.FC<Props> = ({dispatchGetTasks}) => {
                             }),
                         onRowDelete: (oldData) =>
                             new Promise((resolve) => {
-                                setTimeout(() => {
-                                    resolve();
+                                resolve()
+                                console.log("old",oldData)
+                                handleDeleteRow(oldData);
 
-                                    setTaskData((prevState) => {
-                                        const data = [...prevState];
-                                        data.splice(data.indexOf(oldData), 1);
-                                        return { ...prevState, data };
-                                    });
-                                }, 600);
                             }),
                     }}
                 />
             </div>
-       
+
         </Grid>
-        <Grid item xs={4}>
-            
+        <Grid item xs={4} className={classes.CardRoot}>
+            <Card className={classes.card} style={{ backgroundColor: "gray" }}>
+
+                <CardContent>
+                    <Typography variant="caption">New</Typography>
+                    <Typography variant="h4" style={{ textAlign: "center" }}>10</Typography>
+                </CardContent>
+            </Card>
+
+            <Card className={classes.card} style={{ backgroundColor: "green" }}>
+                <CardContent>
+                    <Typography variant="caption">Active</Typography>
+                    <Typography variant="h4" style={{ textAlign: "center" }}>10</Typography>
+                </CardContent>
+            </Card>
+
+            <Card className={classes.card} style={{ backgroundColor: "yellow" }}>
+                <CardContent>
+                    <Typography variant="caption">Resolved</Typography>
+                    <Typography variant="h4" style={{ textAlign: "center" }}>10</Typography>
+                </CardContent>
+            </Card>
+            <Card className={classes.card} style={{ backgroundColor: "purple" }}>
+                <CardContent>
+                    <Typography variant="caption">Closed</Typography>
+                    <Typography variant="h4" style={{ textAlign: "center" }}>10</Typography>
+                </CardContent>
+            </Card>
         </Grid>
     </Grid>
 }
