@@ -6,9 +6,11 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from "react-redux";
 import Store from "./redux/Store";
 ReactDOM.render(
+      <React.StrictMode>
       <Provider store={Store}>
        <App />
-       </Provider>      ,
+       </Provider> 
+       </React.StrictMode>     ,
       document.getElementById('root')
 );
 

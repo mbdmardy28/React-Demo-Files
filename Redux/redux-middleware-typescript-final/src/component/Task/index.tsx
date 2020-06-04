@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Grid, makeStyles, Typography, CardContent, Card } from "@material-ui/core";
-import MaterialTable, { Column } from "material-table";
+import React, { useEffect, useState } from "react";
+import { Grid, makeStyles } from "@material-ui/core";
+import { Column } from "material-table";
 import { Task, TaskState } from "../../redux/TaskState";
 import { useSelector, useDispatch } from "react-redux";
 import { AddTaskAction, DeleteTaskAction } from "../../redux/TaskActions";
 import { green } from "@material-ui/core/colors";
+import { MuiTable, MuiSummaryCard } from "../common";
 
 const useStyles = makeStyles({
     card: {
@@ -21,17 +22,11 @@ const useStyles = makeStyles({
     }
 });
 
-interface TableState {
-    columns: Array<Column<Task>>;
-    data: Task[];
-}
 
 interface Props {
     dispatchGetTasks: () => void
 }
 const TaskComponent: React.FC<Props> = ({ dispatchGetTasks }) => {
-    const classes = useStyles()
-    const { tasks, loading } = useSelector<TaskState>(state => state) as TaskState
     const columnHeaders: Array<Column<Task>> = [
         { title: 'Id', field: 'id', hidden: true },
         { title: 'Title', field: 'title' },
@@ -42,6 +37,8 @@ const TaskComponent: React.FC<Props> = ({ dispatchGetTasks }) => {
             lookup: { Active: 'Active', New: 'New', Resolved: 'Resolved', Closed: 'Closed' },
         },
     ]
+    const classes = useStyles()
+    const { tasks, loading } = useSelector<TaskState>(state => state) as TaskState
 
     const [taskData, setTaskData] = useState<Task[]>([]);
 
@@ -63,80 +60,44 @@ const TaskComponent: React.FC<Props> = ({ dispatchGetTasks }) => {
     }
 
     const handleDeleteRow = (task: Task) => {
-        console.log("perform delete action")
         dispatch(DeleteTaskAction(task));
-
     }
 
     return <Grid container spacing={2} style={{ margin: 10 }}>
         <Grid item xs={8}>
-            <div>
-                <MaterialTable
-                    title="Tasks"
-                    isLoading={loading}
-                    columns={columnHeaders}
-                    data={taskData}
-                    editable={{
-                        onRowAdd: (newData) =>
-                            new Promise((resolve) => {
-                                setTimeout(() => {
-                                    resolve()
-                                    handleAddRow(newData);
-                                }, 600)
-                            }),
-                        onRowUpdate: (newData, oldData) =>
-                            new Promise((resolve) => {
-                                setTimeout(() => {
-                                    resolve();
-                                    if (oldData) {
-                                        setTaskData((prevState) => {
-                                            const data = [...prevState];
-                                            data[data.indexOf(oldData)] = newData;
-                                            return { ...prevState, data };
-                                        });
-                                    }
-                                }, 600);
-                            }),
-                        onRowDelete: (oldData) =>
-                            new Promise((resolve) => {
-                                resolve()
-                                console.log("old",oldData)
-                                handleDeleteRow(oldData);
-
-                            }),
-                    }}
-                />
-            </div>
-
+            <MuiTable
+                isLoading={loading}
+                title="Task Grid"
+                columnHeaders={[...columnHeaders]}
+                data={taskData}
+                addRow={handleAddRow}
+                deleteRow={handleDeleteRow}
+            />
         </Grid>
         <Grid item xs={4} className={classes.CardRoot}>
-            <Card className={classes.card} style={{ backgroundColor: "gray" }}>
+            <MuiSummaryCard
+                title="New"
+                style={{ backgroundColor: "gray" }}
+                total={5}
+            />
 
-                <CardContent>
-                    <Typography variant="caption">New</Typography>
-                    <Typography variant="h4" style={{ textAlign: "center" }}>10</Typography>
-                </CardContent>
-            </Card>
+            <MuiSummaryCard
+                title="Active"
+                style={{ backgroundColor: "green" }}
+                total={10}
+            />
 
-            <Card className={classes.card} style={{ backgroundColor: "green" }}>
-                <CardContent>
-                    <Typography variant="caption">Active</Typography>
-                    <Typography variant="h4" style={{ textAlign: "center" }}>10</Typography>
-                </CardContent>
-            </Card>
+            <MuiSummaryCard
+                title="Resolved"
+                style={{ backgroundColor: "yellow" }}
+                total={20}
+            />
 
-            <Card className={classes.card} style={{ backgroundColor: "yellow" }}>
-                <CardContent>
-                    <Typography variant="caption">Resolved</Typography>
-                    <Typography variant="h4" style={{ textAlign: "center" }}>10</Typography>
-                </CardContent>
-            </Card>
-            <Card className={classes.card} style={{ backgroundColor: "purple" }}>
-                <CardContent>
-                    <Typography variant="caption">Closed</Typography>
-                    <Typography variant="h4" style={{ textAlign: "center" }}>10</Typography>
-                </CardContent>
-            </Card>
+            <MuiSummaryCard
+                title="Closed"
+                style={{ backgroundColor: "purple" }}
+                total={30}
+            />
         </Grid>
     </Grid>
 }
